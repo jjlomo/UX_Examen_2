@@ -13,6 +13,7 @@ router.post("/createUser", async (req, res) => {
     const nuevoUsuario = new User({
       firebaseUid: userRecord.uid,
       email,
+      password,
       nombre,
       apellido,
     });
@@ -34,7 +35,6 @@ router.post("/logIn", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Simula logIn: en producción deberías verificar con Firebase Auth REST API o desde frontend
     const userList = await admin.auth().getUserByEmail(email);
     const userData = await User.findOne({ firebaseUid: userList.uid }).populate("posts");
 
@@ -46,7 +46,7 @@ router.post("/logIn", async (req, res) => {
       email: userData.email,
       nombre: userData.nombre,
       apellido: userData.apellido,
-      posts: userData.posts, // luego puedes poblar los posts relacionados
+      posts: userData.posts, 
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

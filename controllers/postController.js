@@ -11,16 +11,6 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-// GET /posts/:id
-const getPostById = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id).populate("authorId", "nombre apellido email");
-    if (!post) return res.status(404).json({ mensaje: "Post no encontrado" });
-    res.json(post);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
 // POST /posts/
 const createPost = async (req, res) => {
@@ -63,7 +53,6 @@ const deletePost = async (req, res) => {
 
 module.exports = {
   getAllPosts,
-  getPostById,
   createPost,
   updatePost,
   deletePost
