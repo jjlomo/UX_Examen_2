@@ -4,7 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const postRoutes = require('./routes/postRoutes');
+const postRoutes = require("./routes/postRoutes");
 const authRoutes = require("./routes/auth");
 dotenv.config();
 
@@ -15,9 +15,8 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // Rutas protegidas
-app.use('/posts', postRoutes);
-
 app.use('/', authRoutes);
+app.use('/', postRoutes);
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {

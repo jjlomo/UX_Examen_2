@@ -1,29 +1,70 @@
-const Post = require('../models/Post');
+const Post = require("../models/Post");
+const User = require("../models/User");
 
-exports.getAllPosts = async (req, res) => {
+// GET /posts/
+const getAllPosts = async (req, res) => {
+  try {
     const posts = await Post.find();
-    res.json(posts);
+    res.json({ posts });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-exports.createPost = async (req, res) => {
-    const { title, content, author} = req.body;
-    const newPost = new Post({ title, content, author});
-    await newPost.save();
-    res.status(201).json(newPost);
-};
-
-exports.getPostById = async (req, res) => {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ error: 'No encontrado' });
+// GET /posts/:id
+const getPostById = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate("authorId", "nombre apellido email");
+    if (!post) return res.status(404).json({ mensaje: "Post no encontrado" });
     res.json(post);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-exports.updatePost = async (req, res) => {
-    const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(post);
+// POST /posts/
+const createPost = async (req, res) => {
+  const { title, content, authorId } = req.body;
+  try {
+    const user = await User.findById(authorId);
+    if (!user) return res.status(400).json({ error: "El usuario no existe" });
+
+    const newPost = new Post({ title, content, authorId });
+    const savedPost = await newPost.save();
+
+    await User.findByIdAndUpdate(authorId, { $push: { posts: savedPost._id } });
+
+    res.json({ mensaje: "Post creado exitosamente", postId: savedPost._id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-exports.deletePost = async (req, res) => {
+
+// PUT /posts/:id
+const updatePost = async (req, res) => {
+  try {
+    await Post.findByIdAndUpdate(req.params.id, req.body);
+    res.json({ mensaje: "Post actualizado exitosamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// DELETE /posts/:id
+const deletePost = async (req, res) => {
+  try {
     await Post.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Post eliminado' });
+    res.json({ mensaje: "Post eliminado exitosamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  getAllPosts,
+  getPostById,
+  createPost,
+  updatePost,
+  deletePost
 };

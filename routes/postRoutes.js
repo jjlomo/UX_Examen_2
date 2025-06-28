@@ -1,14 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const postController = require('../controllers/postController');
-const verifyToken = require('../middleware/auth');
+const postController = require("../controllers/postController");
 
-// router.use(verifyToken); // protege todas las rutas
-
-router.get('/', postController.getAllPosts);
-router.post('/', postController.createPost);
-router.get('/:id', postController.getPostById);
-router.put('/:id', postController.updatePost);
-router.delete('/:id', postController.deletePost);
+// No protegidas, pero puedes usar middleware como verifyToken si quieres
+ //router.use(verifyToken); // protege todas las rutas
+router.get("/listPost", postController.getAllPosts);
+router.get("/getPost/:id", postController.getPostById);
+router.post("/createPost", postController.createPost);
+router.put("/editPost/:id", postController.updatePost);
+router.delete("/deletePost/:id", postController.deletePost);
 
 module.exports = router;

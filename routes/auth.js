@@ -46,7 +46,7 @@ router.post("/logIn", async (req, res) => {
       email: userData.email,
       nombre: userData.nombre,
       apellido: userData.apellido,
-      posts: [], // luego puedes poblar los posts relacionados
+      posts: userData.posts, // luego puedes poblar los posts relacionados
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
